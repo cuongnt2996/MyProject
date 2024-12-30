@@ -18,5 +18,9 @@ namespace WebApp.Controllers
             return View(productPage);
        
         }
+        public IActionResult Error(){
+            return View();
+        }
     }
+    
 }
