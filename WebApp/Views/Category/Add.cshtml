@@ -1,0 +1,13 @@
+@model Category
+<div asp-validation-summary="All" class="text-danger"></div>
+<form method="post">
+    <div class="row">
+        <label class="form-label col-2" asp-for="CategoryName">Category name</label>
+        <div class="col-10">
+            <input class="form-control" type="text" asp-for="CategoryName">
+        </div>
+    </div>
+    <div class="mt-1">
+        <button class="btn btn-primary offset-2">Save</button>
+    </div>
+</form>

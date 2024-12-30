@@ -1,0 +1,64 @@
+@model IEnumerable<Role>
+<div asp-validation-summary="All"></div>
+@if(TempData["msg"] != null){
+    <div class="alert alert-success">@TempData["msg"]</div>
+}
+<a href="/dashboard/role/Add">Add</a>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <th>Role ID</th>
+        <th>Role Code</th>
+        <th>Role Name</th>
+        <th>IsActived</th>
+        <th>Command</th>
+    </thead>
+    <tbody>
+        @foreach(var item in Model){
+            <tr rid="@item.RoleId" rname="@item.RoleName">
+                <td>@item.RoleId</td>
+                <td>@item.RoleCode</td>
+                <td>@item.RoleName</td>
+                <td>
+                    <input type="checkbox" @(item.IsActived ? "checked" : "") style="pointer-events: none;">
+                </td>
+                <td>
+                    <a href="/dashboard/role/edit/@item.RoleId"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a href="#"><i class="fa-solid fa-delete-left"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>    
+@section Script{
+    <script>
+        $('.fa-delete-left').click(function(){
+            let id = $(this).closest('tr').attr('rid');
+            let name = $(this).closest('tr').attr('rname');
+            console.log(id);
+            console.log(name);
+            $('#deleteModal input[name="id"]').val(id); 
+            $('#deleteModal .modal-body p').text(`Are you sure you want to delete the role "${name}"?`);
+            $('#deleteModal').modal('show');
+        });
+    </script>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" class="modal-content" action="/dashboard/role/delete">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete role</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>

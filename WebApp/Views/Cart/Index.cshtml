@@ -1,0 +1,40 @@
+@model IEnumerable<Cart>
+<table class="table table-Info">
+    <thead class="table-Info">
+        <tr>
+            <th>Category Name</th>
+            <th>Product Name</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Amount</th>
+            <th>Command</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model){
+            <tr>
+                <td>@item.CategoryName</td>
+                <td>@item.ProductName</td>
+                <td><img src="@config["ApiUrl"]/images/@item.ImageUrl" alt="" width="32"></td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@(item.Quantity *item.Price)</td>
+                <td>
+                    
+                    <a href="/Cart/delete/@item.CartId"><i class="fa-regular fa-trash-can"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="6">Total</th>
+            <td class="text-danger"><strong>@(Model.Sum(p=>p.Quantity*p.Price))</strong></td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+<div class="d-flex justify-content-end">
+    <a href="/Checkout/Invoice" class="btn btn-primary">Check out</a>
+</div>

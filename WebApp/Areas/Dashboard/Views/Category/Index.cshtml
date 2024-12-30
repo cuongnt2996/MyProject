@@ -1,0 +1,76 @@
+@model IEnumerable<Category>
+<div asp-validation-summary="All" class="text-danger"></div>
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-success">@TempData["msg"]</div>
+}
+<a href="/dashboard/category/add">Add</a>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <th>CategoryId</th>
+        <th>CategoryName</th>
+        <th>IacActived</th>
+        <th>Command</th>
+    </thead>
+    <tbody>
+        @foreach(var item in Model){
+            <tr cid="@item.CategoryId" cname="@item.CategoryName">
+                <td>@item.CategoryId</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    <input type="checkbox" @(item.IsActived ? "checked" : "") readonly>@* @item.IsActived *@
+                </td>
+                <td>
+                    <a href="/dashboard/category/edit/@item.CategoryId"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a href="#"><i class="fa-solid fa-delete-left"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Script{
+    <script>
+        $('.fa-delete-left').click(function(){
+            let id = $(this).closest('tr').attr('cid');
+            let name = $(this).closest('tr').attr('cname');
+            @* console.log(id);
+            console.log(name); *@
+            $.ajax({
+                url: `/dashboard/Category/CheckDelete?id=${id}`, 
+                method: 'get',
+                success: function(d){
+                    @* console.log(d); *@
+                    if(d>0){
+                        alert("This category is used, you cannot delete!");
+                    }else{
+                        $('#deleteModal input[name="id"]').val(id); 
+                        $('#deleteModal .modal-body p').text(`Are you sure you want to delete the product "${name}"?`);
+                        $('#deleteModal').modal('show');
+                    }
+
+                }
+            });
+        });
+    </script>
+}
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" class="modal-content" action="/dashboard/category/delete">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Category</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,129 @@
+@model ProductPage
+@{
+    int currentPage = ViewBag.CurrentPage;
+    int activeCategoryId = ViewBag.ActiveCategoryId;
+    int totalPages = Model.Pages; 
+    int startPage = Math.Max(1, currentPage - 1);
+    int endPage = Math.Min(totalPages, currentPage + 1);
+}
+<h1 class="title-head"> Tìm thấy @ViewBag.ProductCount sản phẩm phù hợp với từ khoá @ViewData["keyword"]</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <h4>Danh mục</h4>
+            <ul class="nav flex-column">
+                @* <li class="nav-item">
+                    <a class="nav-link @(activeCategoryId == 0 ? "active" : "")" id="all-categories" href="/search/index?page=1&categoryId=0">
+                        Tất Cả
+                    </a>
+                </li> *@
+                @foreach (CategoryWithQuantity cat in (List<CategoryWithQuantity>)ViewBag.Categories)
+                {
+                    <li class="nav-item">
+                        <a class="mt-1 btn btn-outline-primary @(cat.CategoryId == activeCategoryId ? "active" : "")" id="@cat.CategoryId" href="/search/index?page=1&categoryId=@cat.CategoryId&keyword=@ViewData["keyword"]">
+                            @cat.CategoryName <span>(@cat.ProductQuantity)</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-10">
+            <div class="row">
+                @foreach(var item in Model.Products)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card product-card">
+                            <a href="/Product/Details/@item.ProductId" class="card-link">
+                                <img src="@config["ApiUrl"]/images/@item.ImageUrl" class="card-img-top product-image" alt="Product Image">
+                                <div class="card-body">
+                                    <h5 class="card-title product-title">@item.ProductName</h5>
+                                </div>
+                            </a>
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control quantity-input" placeholder="Số lượng" aria-label="Quantity" min="0">
+                                    <button class="btn btn-primary add-to-cart" type="button" value="@item.ProductId">
+                                        <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col-12">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="/search/index?page=@(currentPage - 1)&categoryId=@activeCategoryId&keyword=@ViewData["keyword"]">Previous</a>
+                </li>
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        
+                        <a class="page-link" href="/search/index?page=@i&categoryId=@activeCategoryId&keyword=@ViewData["keyword"]">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="/search/index?page=@(currentPage + 1)&categoryId=@activeCategoryId&keyword=@ViewData["keyword"]">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Đặt kích thước cố định cho hình ảnh sản phẩm */
+    .product-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Đặt kích thước cố định và giới hạn số dòng cho tên sản phẩm */
+    .product-title {
+        height: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2; /* Giới hạn tên sản phẩm chỉ hiển thị 2 dòng */
+    }
+    /* Kiểm tra xem thuộc tính active đã được áp dụng hay chưa */
+    .nav-link.active {
+        color: #fff !important;
+        background-color: #007bff !important;
+     }
+</style>
+@section Script{ 
+<script>
+    $('.add-to-cart').click(function(e){
+        e.preventDefault();
+        let productId = $(this).val();        
+        let quantity = $(this).closest('.input-group').find('.quantity-input').val();
+        console.log(productId);
+        console.log(quantity)
+        $.post('/cart/Add',{'productId':productId,'quantity':quantity},(d)=>{
+            if(d>0){
+                let currentCount = parseInt($('#cartCount').text()); 
+                $('#cartCount').text(currentCount + d);
+            }else{
+                window.location.href='/cart/error';
+            }
+        })
+        @* $('#cartCount').text(16); *@
+        // Kiểm tra xem phần tử cartCount có tồn tại không 
+        if ($('#cartCount').length) 
+        { 
+            console.log('cartCount exists'); 
+        } else { console.log('cartCount does not exist');
+        }
+    });
+</script>
+}

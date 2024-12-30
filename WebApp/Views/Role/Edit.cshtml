@@ -1,0 +1,24 @@
+@model Role
+<form method="post">
+    <div class="row">
+        <label class="form-label col-2" asp-for="RoleCode">RoleCode</label>
+        <div class="col-10">
+            <input class="form-control" type="text" asp-for="RoleCode">
+        </div>
+    </div>
+    <div class="row mt-1">
+        <label class="form-label col-2" asp-for="RoleName">RoleName</label>
+        <div class="col-10">
+            <input class="form-control" type="text" asp-for="RoleName">
+        </div>
+    </div>
+    <div class="row mt-1">
+        <label class="form-label col-2" asp-for="IsActived">IsActived</label>
+        <div class="col-10">
+            <input type="checkbox" asp-for="IsActived" >
+        </div>
+    </div>
+    <div class="mt-1">
+        <button class="btn btn-primary offset-2">Save Changes</button>
+    </div>
+</form>

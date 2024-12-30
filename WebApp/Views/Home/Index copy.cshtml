@@ -1,0 +1,96 @@
+@model ProductPage
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column nav-pills" id="category-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab-all-tab" data-bs-toggle="pill" href="#tab-all" role="tab"
+                       aria-controls="tab-all" aria-selected="true">
+                        <span class="text-dark">Tất cả</span>
+                    </a>
+                </li>
+                @foreach (Category cat in (List<Category>)ViewBag.Categories)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-@cat.CategoryId-tab" data-bs-toggle="pill" href="#tab-@cat.CategoryId" role="tab"
+                           aria-controls="tab-@cat.CategoryId" aria-selected="false">
+                            <span class="text-dark">@cat.CategoryName</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-10">
+            <div class="tab-content" id="category-tabs-content">
+                <div class="tab-pane fade show active" id="tab-all" role="tabpanel" aria-labelledby="tab-all-tab">
+                    <div class="row">
+                        @foreach (var item in Model.Products)
+                        {
+                            <div class="col-md-4">
+                                <div class="card mb-4 shadow-sm">
+                                    <a href="/product/details/@item.ProductId" class="text-decoration-none">
+                                        @* <img src="@config["ApiUrl"]/images/@item.ImageUrl" alt="@item.ProductName" class="card-img-top" style="max-height: 200px; object-fit: cover;"> *@
+                                        <div class="card-body">
+                                            <h5 class="card-title">@item.ProductName</h5>
+                                            @* <p class="card-text">@Html.Raw(item.Description)</p> *@
+                                        </div>
+                                    </a>
+                                    <div class="card-body">
+                                        <div class="input-group mb-3">
+                                            <input type="number" class="form-control" name="quantity" min="1" value="1">
+                                            <button class="btn btn-primary add-to-cart" type="button" v="@item.ProductId">Add to cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                @foreach (Category cat in (List<Category>)ViewBag.Categories)
+                {
+                    <div class="tab-pane fade" id="tab-@cat.CategoryId" role="tabpanel" aria-labelledby="tab-@cat.CategoryId-tab">
+                        <div class="row">
+                            @foreach (var item in Model.Products.Where(p => p.CategoryId == cat.CategoryId))
+                            {
+                                <div class="col-md-4">
+                                    <div class="card mb-4 shadow-sm">
+                                        <a href="/product/details/@item.ProductId" class="text-decoration-none">
+                                            @* <img src="@item.ImageUrl" alt="@item.ProductName" class="card-img-top" style="max-height: 200px; object-fit: cover;"> *@
+                                            <div class="card-body">
+                                                <h5 class="card-title">@item.ProductName</h5>
+                                                @* <p class="card-text">@item.Description</p> *@
+                                            </div>
+                                        </a>
+                                        <div class="card-body">
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" name="quantity" min="1" value="1">
+                                                <button class="btn btn-primary add-to-cart" type="button" v="@item.ProductId">Add to cart</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Script{ 
+<script>
+    $('.add-to-cart').click(function(e){
+        e.preventDefault();
+        let productId = $(this).attr('v');
+        console.log(productId);
+        $('#cartCount').text(16);
+        // Kiểm tra xem phần tử cartCount có tồn tại không 
+        if ($('#cartCount').length) 
+        { 
+            console.log('cartCount exists'); 
+        } else { console.log('cartCount does not exist');
+        }
+    });
+</script>
+}
+

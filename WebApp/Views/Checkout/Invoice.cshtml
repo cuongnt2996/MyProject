@@ -1,0 +1,77 @@
+@model Invoice
+<form  method="post">
+    <h3>Thông tin đặt hàng</h3>
+    <div class="mt-1">
+        <input type="hidden" asp-for="CreatedUserId">
+        <div class="row">
+            <label class="form-label col-2" asp-for="CustomerName">Customer Name</label>
+            <div class="col-10">
+                <input class="form-control" type="text" asp-for="CustomerName">
+            </div>
+        </div>
+        <div class="row mt-1">
+            <label class="form-label col-2" asp-for="Email">Email</label>
+            <div class="col-10">
+                <input class="form-control" type="text" asp-for="Email">
+            </div>
+        </div>
+        <div class="row mt-1">
+            <label class="form-label col-2" asp-for="Address">Address</label>
+            <div class="col-10">
+                <input class="form-control" type="text" asp-for="Address" required>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <label class="form-label col-2" asp-for="Phone">Phone</label>
+            <div class="col-10">
+                <input class="form-control" type="text" asp-for="Phone" required>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <label class="form-label col-2" asp-for="Amount">Total Amout</label>
+            <div class="col-10">
+                <input class="form-control" type="text" asp-for="Amount" required readonly>
+            </div>
+        </div>
+    </div>
+    <h3 class="mt-1">Thông tin sản phẩm</h3>
+    <table class="table table-Info">
+        <thead class="table-Info">
+            <tr>
+                <th>Product Name</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.InvoiceItems.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" asp-for="InvoiceItems[i].ProductId" />
+                        <input type="hidden" asp-for="InvoiceItems[i].ProductName" />
+                        <input type="hidden" asp-for="InvoiceItems[i].CartId" />
+                        @Model.InvoiceItems[i].ProductName
+                    </td>
+                    <td>
+                        <img src="@config["ApiUrl"]/images/@Model.InvoiceItems[i].ImageUrl" alt="" width="32" />
+                    </td>
+                    <td>
+                        <input class="form-control" asp-for="InvoiceItems[i].Quantity" readonly/>
+                    </td>
+                    <td>
+                        <input class="form-control" asp-for="InvoiceItems[i].Price" readonly/>
+                    </td>
+                    <td>
+                        @(@Model.InvoiceItems[i].Quantity * @Model.InvoiceItems[i].Price)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Thanh toán</button>
+    </div>
+</form>

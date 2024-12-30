@@ -1,0 +1,25 @@
+@model IEnumerable<Invoice>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>InvoiceCode</th>
+            <th>CreatedDate</th>
+            <th>Total Amount</th>
+            <th>Is Paid</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model){
+            <tr>
+                <td>@item.InvoiceCode</td>
+                <td>@item.CreatedDate</td>
+                <td>@item.Amount</td>
+                <td>
+                    <input type="checkbox" @(item.IsPaid ? "checked" : "") disabled>
+                </td>
+                <td><a href="/invoice/Detail?InvoiceId=@item.InvoiceId">Detail</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

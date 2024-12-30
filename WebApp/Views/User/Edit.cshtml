@@ -1,0 +1,25 @@
+@model User
+<div asp-validation-summary="All"></div>
+<form method="post">
+    <div class="row">
+        <label class="form-label col-2" asp-for="UserName">User Name</label>
+        <div class="col-10">
+            <input class="form-control" type="text" asp-for="UserName">
+        </div>
+    </div>
+    <div class="row mt-1">
+        <label class="form-label col-2" asp-for="Email">Email</label>
+        <div class="col-10">
+            <input class="form-control" type="text" asp-for="Email">
+        </div>
+    </div>
+    <div class="row mt-1">
+        <label class="form-label col-2" asp-for="RoleId">Role</label>
+        <div class="col-10">
+            <input class="form-control" type="text" asp-for="RoleId">
+        </div>
+    </div>
+    <div class="mt-1">
+        <button class="btn btn-primary offset-2">Save Changes</button>
+    </div>
+</form>

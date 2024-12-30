@@ -1,0 +1,106 @@
+@model ProductPage
+
+@{
+    @* string? pageQuery = Context.Request.Query["page"];
+    int currentPage;
+    bool isParsed = int.TryParse(pageQuery, out currentPage);
+    currentPage = isParsed ? currentPage : 1; *@
+    int currentPage= ViewBag.CurrentPage;
+    int totalPages = Model.Pages;
+    int startPage = Math.Max(1, currentPage - 1);
+    int endPage = Math.Min(totalPages, currentPage + 1);
+}
+
+<div asp-validation-summary="All"></div>
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-success">@TempData["msg"]</div>
+}
+<a href="/product/add">Add</a>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ProductID</th>
+            <th>Category</th>
+            <th>ProductName</th>
+            <th>Unit</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>IsActived</th>
+            <th>Command</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Products)
+        {
+            <tr pid="@item.ProductId" pname="@item.ProductName">
+                <td>@item.ProductId</td>
+                <td>@item.CategoryName</td>
+                <td>@item.ProductName</td>
+                <td>@item.Unit</td>
+                <td>@item.Price</td>
+                <td>
+                    <img src="@config["ApiUrl"]/images/@item.ImageUrl" alt="@item.ProductName" width="100">
+                </td>
+                <td>
+                    <input type="checkbox" @(item.IsActived ? "checked" : "") disabled>
+                </td>
+                <td>
+                    <a href="/product/edit/@item.ProductId"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a href="#"><i class="fa-solid fa-delete-left"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<ul class="pagination">
+    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+        <a class="page-link" href="/product/index/@(currentPage - 1)">Previous</a>
+    </li>
+
+    @for (int i = startPage; i <= endPage; i++)
+    {
+        <li class="page-item @(i == currentPage ? "active" : "")">
+            <a class="page-link" href="/product/index/@i">@i</a>
+        </li>
+    }
+
+    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+        <a class="page-link" href="/product/index/@(currentPage + 1)">Next</a>
+    </li>
+</ul>
+
+@section Script{
+    <script>
+        $('.fa-delete-left').click(function(){
+            let id = $(this).closest('tr').attr('pid');
+            let name = $(this).closest('tr').attr('pname');
+            console.log(id);
+            console.log(name);
+            $('#deleteModal input[name="id"]').val(id); 
+            $('#deleteModal .modal-body p').text(`Are you sure you want to delete the product "${name}"?`);
+            $('#deleteModal').modal('show');
+        });
+    </script>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" class="modal-content" action="/product/delete">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="id">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>

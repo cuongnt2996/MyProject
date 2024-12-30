@@ -1,0 +1,25 @@
+@model IEnumerable<User>
+<a href="/Dashboard/User/AddUser">Add</a>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <th>UserID</th>
+        <th>UserName</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Command</th>
+    </thead>
+    <tbody>
+        @foreach(var item in @Model){
+            <tr>
+                <td>@item.UserId</td>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                <td></td>
+                <td>                    
+                    <a href="/Dashboard/User/edit/@item.UserId"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a href="#"><i class="fa-solid fa-delete-left"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

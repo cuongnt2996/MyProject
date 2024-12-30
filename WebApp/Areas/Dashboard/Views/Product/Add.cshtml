@@ -1,0 +1,98 @@
+@model Product
+<form method="post">
+  <div class="row">
+    <label class="col-2 form-label" asp-for="CategoryId">Category</label>
+    <div class="col-10">
+        <select asp-for="CategoryId" asp-items="@ViewBag.Categories"></select>
+    </div>
+  </div>
+  <div class="row mt-1">
+    <label class="col-2 form-label" asp-for="ProductName">Product Name</label>
+    <div class="col-10">
+        <input class="form-control" type="text" asp-for="ProductName">
+    </div>
+  </div>
+  <div class="row mt-1">
+    <label class="col-2 form-label" asp-for="Unit">Unit</label>
+    <div class="col-10">
+        <input class="form-control" type="text" asp-for="Unit">
+    </div>
+  </div>
+  <div class="row mt-1">
+    <label class="col-2 form-label" asp-for="Price">Price</label>
+    <div class="col-10">
+        <input class="form-control" type="number" asp-for="Price" min="0" step="0.01">
+    </div>
+  </div>
+  <div class="row mt-1">
+    <label class="col-2 form-label" asp-for="Description">Description</label>
+    <div class="col-10">
+        <textarea class="form-control editor" type="text" asp-for="Description"></textarea>
+    </div>
+  </div>
+  <div class="row mt-1">
+    <label class="col-2 form-label" asp-for="ImageUrl">Image</label>
+    <input class="d-none" type="file" id="f" accept="image/*">
+    <div class="col-10">
+        <img id="img" src="/images/no-image.png" alt="No Image" width="160">
+        <input type="hidden" asp-for="ImageUrl" required>
+    </div>
+  </div>
+  <div class="mt-1">
+    <button class="offset-2 btn btn-primary">Save</button>
+  </div>
+</form>
+@section Script{
+  <script>
+    $(img).click(function(){
+      $(f).click();
+    });
+    $(f).change(function(){
+      let file = this.files[0];
+      let fd = new FormData();
+      console.log(file.name);
+      fd.append('f', file ,file.name);
+      $.ajax({
+        url: '/upload/add',
+        method: 'post',
+        data: fd,
+        contentType: false,
+        processData: false,
+        success: function(d){
+          console.log(d);
+          $(img).attr('src',`@config["ApiUrl"]/images/${d}`);
+          $(ImageUrl).val(d);
+        }
+      });
+    });
+  </script>
+}
+<!-- Place the first <script> tag in your HTML's <head> -->
+<script src="https://cdn.tiny.cloud/1/kf9a3pynyawvi924ka5x8eq1d5liqcnnoacabcpjlw39n7vp/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+<!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+<script>
+  tinymce.init({
+    selector: 'textarea',
+    plugins: [
+      // Core editing features
+      'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+      // Your account includes a free trial of TinyMCE premium features
+      // Try the most popular premium features until Dec 3, 2024:
+      'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown',
+      // Early access to document converters
+      'importword', 'exportword', 'exportpdf'
+    ],
+    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+    tinycomments_mode: 'embedded',
+    tinycomments_author: 'Author name',
+    mergetags_list: [
+      { value: 'First.Name', title: 'First Name' },
+      { value: 'Email', title: 'Email' },
+    ],
+    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+    exportpdf_converter_options: { 'format': 'Letter', 'margin_top': '1in', 'margin_right': '1in', 'margin_bottom': '1in', 'margin_left': '1in' },
+    exportword_converter_options: { 'document': { 'size': 'Letter' } },
+    importword_converter_options: { 'formatting': { 'styles': 'inline', 'resets': 'inline',	'defaults': 'inline', } },
+  });
+</script>
+
